@@ -14,9 +14,9 @@ pipeline {
       }
       stage('Publish Docker Image') {
         steps {
-          sh "docker push ${REGISTRY}/project-backend:${BRANCH_NAME}-${BUILD_NUMBER} ."
-          sh "docker push ${REGISTRY}/project-mongo:${BRANCH_NAME}-${BUILD_NUMBER} ."
-          sh "docker push ${REGISTRY}/project-frontend:${BRANCH_NAME}-${BUILD_NUMBER} ."
+          sh "docker push ${REGISTRY}/project-backend:${BRANCH_NAME}-${BUILD_NUMBER}"
+          sh "docker push ${REGISTRY}/project-mongo:${BRANCH_NAME}-${BUILD_NUMBER}"
+          sh "docker push ${REGISTRY}/project-frontend:${BRANCH_NAME}-${BUILD_NUMBER}"
         }
       }
       stage('Deploy to Kubernetes') {
