@@ -29,14 +29,14 @@ pipeline {
               sh "sed -i 's/TAG-DB/${BRANCH_NAME}-${BUILD_NUMBER}/g' ./manifest/charts/mern/values.yaml"
               sh "sed -i 's/TAG-BACKEND/${BRANCH_NAME}-${BUILD_NUMBER}/g' ./manifest/charts/mern/values.yaml"
               sh "sed -i 's/TAG-FRONTEND/${BRANCH_NAME}-${BUILD_NUMBER}/g' ./manifest/charts/mern/values.yaml"
-              sh "helm uninstall mern"
+              sh "helm uninstall mern -n dev"
               sh "helm install mern ./manifest/charts/mern -n dev"
             }
             else if ( env.GIT_BRANCH == 'main' ) {
               sh "sed -i 's/TAG-DB/${BRANCH_NAME}-${BUILD_NUMBER}/g' ./manifest/charts/mern/values.yaml"
               sh "sed -i 's/TAG-BACKEND/${BRANCH_NAME}-${BUILD_NUMBER}/g' ./manifest/charts/mern/values.yaml"
               sh "sed -i 's/TAG-FRONTEND/${BRANCH_NAME}-${BUILD_NUMBER}/g' ./manifest/charts/mern/values.yaml"
-              sh "helm uninstall mern"
+              sh "helm uninstall mern -n prod"
               sh "helm install mern ./manifest/charts/mern -n prod"
             }
           }
