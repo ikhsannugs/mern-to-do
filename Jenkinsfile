@@ -7,9 +7,9 @@ pipeline {
     stages{
       stage('Build with Docker') {
         steps {
-          sh "docker build -f ./backend/Dockerfile -t ${REGISTRY}/project-backend:${BRANCH_NAME}-${BUILD_NUMBER} ."
-          sh "docker build -f ./mongo/Dockerfile -t ${REGISTRY}/project-mongo:${BRANCH_NAME}-${BUILD_NUMBER} ."
-          sh "docker build -f ./frontend/Dockerfile -t ${REGISTRY}/project-frontend:${BRANCH_NAME}-${BUILD_NUMBER} ."
+          sh "cd backend && docker build -f Dockerfile -t ${REGISTRY}/project-backend:${BRANCH_NAME}-${BUILD_NUMBER} ."
+          sh "cd mongo && docker build -f Dockerfile -t ${REGISTRY}/project-mongo:${BRANCH_NAME}-${BUILD_NUMBER} ."
+          sh "cd frontend && docker build -f Dockerfile -t ${REGISTRY}/project-frontend:${BRANCH_NAME}-${BUILD_NUMBER} ."
         }
       }
       stage('Publish Docker Image') {
