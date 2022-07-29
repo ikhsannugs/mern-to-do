@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "mern.fullname" . }}-mongodb
+  labels:
+    app.kubernetes.io/component: mongodb
+    {{- include "mern.labels" . | nindent 4 }}
+spec:
+  serviceName: "mern-mongo"
+  replicas: {{ .Values.mongodb.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: mongodb
+      {{- include "mern.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.mongodb.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: mongodb
+        {{- include "mern.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "mern.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.mongodb.podSecurityContext | nindent 8 }}
+      containers:
+      - name: {{ .Chart.Name }}-mongodb
+        securityContext:
+          {{- toYaml .Values.mongodb.securityContext | nindent 12 }}
+        image: "{{ .Values.mongodb.image.repository }}:{{ .Values.mongodb.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.mongodb.image.pullPolicy }}
+        ports:
+        - name: {{ include "mern.fullname" . }}-mongodb
+          containerPort: {{ .Values.frontend.service.containerPort }}
+          protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - mongo --disableImplicitSessions --eval "db.adminCommand('ping')" | grep -q "ok"
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - mongo --disableImplicitSessions --eval "db.adminCommand('ping')" | grep -q "ok"
+        resources:
+          {{- toYaml .Values.mongodb.resources | nindent 12 }}
+      {{- with .Values.mongodb.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mongodb.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mongodb.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+        volumeMounts:
+        - name: {{ include "mern.fullname" . }}-mongodb
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ include "mern.fullname" . }}-mongodb
+    spec:
+      storageClassName: {{ .Values.mongodb.storage.className }}
+      accessModes:
+      {{- range .Values.mongodb.storage.accessModes }}
+        - {{ . | quote }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.mongodb.storage.size }}
