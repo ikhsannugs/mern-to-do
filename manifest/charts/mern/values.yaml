@@ -173,7 +173,7 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  hosts: ikhsan.devopscloud.tech
+  hosts: dev.devopscloud.tech
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
